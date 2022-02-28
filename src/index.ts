@@ -19,7 +19,7 @@ const machine = renderer.withContext({
     .withContext({
       ...cardCollection.context,
       frames: {
-        ready: [View],
+        playing: [View],
         collecting: [Entry],
       },
     }),

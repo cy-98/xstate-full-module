@@ -34,17 +34,25 @@ export const renderer = model.createMachine({
             const frames = controller.context.frames as RenderFrames;
             let curFrame: RenderFrames[number];
 
-            interpret(controller)
-              .onChange((context) => {
+            const service = interpret(controller);
+
+            service
+              .onChange((context, preContext) => {
                 if (!curFrame) return;
-                const provider = ContextProvider(context);
+                const provider = ContextProvider({
+                  ...context,
+                  service,
+                });
                 renderFrame(provider as unknown as "div", curFrame, root);
               })
               .onTransition((state) => {
                 const key = Object.keys(frames).find((k) => state.matches(k));
                 const frame = frames[key];
-                const provider = ContextProvider(state.machine.context);
-                renderFrame(provider as unknown as "div", frame, root);
+                const provider = ContextProvider({
+                  ...state.machine.context,
+                  service
+                });
+                renderFrame(provider as unknown as "div", frame, root, () => curFrame = frame);
               })
               .start();
           }),
