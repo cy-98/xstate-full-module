@@ -1,16 +1,10 @@
-import { ReactElement, ReactNode } from 'react';
-import { render } from 'react-dom';
+import { ReactElement, ReactNode } from "react";
+import { render, Renderer } from "react-dom";
+export { renderToString } from "react-dom/server";
 
-export type RenderImplement = RenderDOMImplement | RenderToStringImplement | ComposeComponentsImplement;
+export type RenderImplement =
+  | Renderer
+  | { (element: ReactElement): string }
 
-export type RenderDOMImplement = (View: ReactElement, root: HTMLElement) => void;
-export const renderDOM = (View: ReactElement, root: HTMLElement) => render(View, root)
-
-export type RenderToStringImplement = (View: ReactElement) => string;
-export const renderToString = () => {
-
-}
-export type ComposeComponentsImplement = (View: ReactElement) => ReactNode[];
-export const composeComponents = () => {
-
-}
+// export type ComposeComponentsImplement = (View: ReactElement) => ReactNode[];
+// export const composeComponents = () => {};
