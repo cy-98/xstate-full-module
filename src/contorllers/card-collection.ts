@@ -1,12 +1,12 @@
 import { FunctionComponent, ReactNode } from "react";
-import { assign, DoneInvokeEvent } from "xstate";
+import { assign, DoneInvokeEvent, actions } from "xstate";
+import { log } from "xstate/lib/actions";
 import { createModel } from "xstate/lib/model";
 import { Card } from "../services/fetchcard";
 
 export type RenderFrames = Record<string, React.FC[]>;
 
 const model = createModel({
-  render: (() => {}) as VoidFunction,
   // 数据模型
   data: {
     ownCards: [] as Card[],
@@ -18,44 +18,25 @@ const model = createModel({
   // 场景
   frames: {
     ready: [],
-    collecting: [],
+    collected: [],
     redeem: [],
   } as RenderFrames,
 });
+
 export const cardCollection = model.createMachine(
   {
-    initial: "playing",
+    id: "cardAct",
+    initial: "collecting",
+
     states: {
-      playing: {
-        initial: "silent",
-        on: {
-          fetch: [
-            { target: ".drawing", cond: (ctx) => ctx.data.ownCards.length < 6 },
-            { target: "collecting" },
-          ],
-        },
-        states: {
-          silent: {},
-          drawing: {
-            invoke: {
-              src: "fetchNewCard",
-              onDone: {
-                target: 'silent',
-                actions: [
-                  assign({
-                    data({ data }, event: DoneInvokeEvent<Card>) {
-                      if (data.ownCards.length === 6) return data;
-                      return {
-                        ...data,
-                        ownCards: [...data.ownCards, event.data],
-                      };
-                    },
-                  }),
-                ],
-              },
-            },
+      collecting: {
+        on: { FETCH: ".drawing" },
+        always: [
+          {
+            target: "collected",
+            cond: (ctx) => ctx.data.ownCards.length === 6,
           },
-        },
+        ],
         invoke: {
           src: "fetchOwnCards",
           onDone: {
@@ -71,14 +52,45 @@ export const cardCollection = model.createMachine(
             ],
           },
         },
+        initial: "idle",
+        states: {
+          idle: {
+            always: [
+              {
+                target: "#cardAct.collected",
+                cond: (ctx) => ctx.data.ownCards.length === 6,
+              },
+            ],
+          },
+          drawing: {
+            invoke: {
+              src: "fetchNewCard",
+              onDone: {
+                target: ["idle"],
+                actions: [
+                  assign({
+                    data({ data }, event: DoneInvokeEvent<Card>) {
+                      return data.ownCards.length !== 6
+                        ? { ...data, ownCards: [...data.ownCards, event.data] }
+                        : data;
+                    },
+                  }),
+                ],
+              },
+            },
+          },
+        },
       },
-      collecting: {},
+      collected: {},
     },
   },
   {
     services: {
       fetchNewCard: () => new Promise<Card>((r) => r({} as Card)),
-      fetchOwnCards: () => new Promise((r) => r(1)),
+      fetchOwnCards: () => new Promise((r) => r([{} as Card])),
+      popup: () => new Promise((r) => {
+        console.log('popup')
+      }),
     },
   }
 );

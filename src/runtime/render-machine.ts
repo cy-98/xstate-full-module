@@ -2,11 +2,7 @@ import { ContextProvider } from "./context";
 import { createElement } from "react";
 import { createModel } from "xstate/lib/model";
 import { render } from "react-dom";
-import {
-  StateMachine,
-  EventObject,
-  interpret,
-} from "xstate";
+import { StateMachine, EventObject, interpret } from "xstate";
 import { RenderFrames } from "./../contorllers/card-collection";
 import { ErrorView } from "../components/Error/Error";
 
@@ -23,43 +19,40 @@ const model = createModel(
   }
 );
 
-export const renderer = model.createMachine({
-  initial: "load",
-  states: {
-    // 配置层
-    load: {
-      entry: [
-        ({ currentView, root, controller }) =>
-          render(currentView, root, () => {
-            const frames = controller.context.frames as RenderFrames;
-            let curFrame: RenderFrames[number];
+export const renderer = ({ root, controller }) => {
+  return () => {
+    const frames = controller.context.frames as RenderFrames;
+    let curFrame: RenderFrames[number];
 
-            const service = interpret(controller);
+    const service = interpret(controller);
 
-            service
-              .onChange((context, preContext) => {
-                if (!curFrame) return;
-                const provider = ContextProvider({
-                  ...context,
-                  service,
-                });
-                renderFrame(provider as unknown as "div", curFrame, root);
-              })
-              .onTransition((state) => {
-                const key = Object.keys(frames).find((k) => state.matches(k));
-                const frame = frames[key];
-                const provider = ContextProvider({
-                  ...state.machine.context,
-                  service
-                });
-                renderFrame(provider as unknown as "div", frame, root, () => curFrame = frame);
-              })
-              .start();
-          }),
-      ],
-    },
-  },
-});
+    service
+      .onChange((context) => {
+        // context, preContext
+        if (!curFrame) return;
+        const provider = ContextProvider({
+          ...context,
+          service,
+        });
+        renderFrame(provider as unknown as "div", curFrame, root);
+      })
+      .onTransition((state) => {
+        const key = Object.keys(frames).find((k) => state.matches(k));
+        const frame = frames[key];
+        const provider = ContextProvider({
+          ...state.machine.context,
+          service,
+        });
+        renderFrame(
+          provider as unknown as "div",
+          frame,
+          root,
+          () => (curFrame = frame)
+        );
+      })
+      .start();
+  };
+};
 
 function renderFrame(provider: string, frame, root, cb = () => {}) {
   return render(
