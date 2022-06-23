@@ -1,5 +1,6 @@
 import { waitFor } from "xstate/lib/waitFor";
 import { Action } from "../types/action";
+import { isString } from "./../utils/index";
 import { ActorRefFrom, assign, createMachine } from "xstate";
 import { ActionActor, ModuleActor } from "../types/actor";
 
@@ -33,6 +34,10 @@ export const centerMachine = createMachine<
         always: "idle",
       },
       idle: {
+        always: {
+          target: "consume",
+          cond: "isActionWaiting",
+        },
         on: {
           ACTION: {
             target: "consume",
@@ -40,7 +45,7 @@ export const centerMachine = createMachine<
           },
         },
       },
-      // 可插入 可中断
+      // 可插入
       consume: {
         entry: assign(({ actions }) => {
           const [current, ...rest] = actions;
@@ -55,7 +60,7 @@ export const centerMachine = createMachine<
           onDone: [
             { target: "close", cond: "isCloseActionWaiting" },
             { target: "update", cond: "isUpdateActionWaiting" },
-            { target: "consume", cond: "isActionWaiting" },
+            { target: "consume", cond: "isActionWaiting", internal: false },
             { target: "idle" },
           ],
         },
@@ -79,39 +84,42 @@ export const centerMachine = createMachine<
   {
     guards: {
       isActionWaiting: ({ actions }) => actions.length > 0,
-      isCloseActionWaiting: ({ actions: [action] }) => action?.key === "close",
+      isCloseActionWaiting: ({ actions: [action] }) =>
+        action?.actor === "close",
       isUpdateActionWaiting: ({ actions: [action] }) =>
-        action?.key === "update",
+        action?.actor === "update",
     },
     services: {
       consume({ currentAction, actors }) {
-        console.log(actors);
-
         let actor;
         if (!currentAction) return Promise.resolve();
-        if (typeof currentAction.actor === "string")
-          actor = actors.find(({ id }) => id === currentAction.actor);
+
+        actor = isString(currentAction.actor)
+          ? actors.find(({ id }) => id === currentAction.actor)
+          : currentAction.actor;
+
         if (!actor) return Promise.resolve("no actor found"); // if development throw new Error("no actor found");
 
-        actor.send({ type: "PLAY" });
-        return waitFor(actor, (state) => {
-          return typeof state === "string"
-            ? state === "done"
-            : state.matches("done");
-        });
+        actor.send({ type: "TOGGLE" });
+
+        return waitFor(
+          actor,
+          (state) =>
+            isString(state) ? state === "done" : state.matches("done"),
+          { timeout: Infinity }
+        );
       },
     },
     actions: {
       assignAction: assign((context, event) => {
-        if (event.type === "ACTION") {
-          return {
-            ...context,
-            actions: [...context.actions, event.data].sort(
-              (a, b) => a.priority - b.priority
-            ),
-          };
-        }
-        return { ...context };
+        return event.type === "ACTION"
+          ? {
+              ...context,
+              actions: [...context.actions, event.data].sort(
+                (a, b) => a.priority - b.priority
+              ),
+            }
+          : { ...context };
       }),
     },
   }

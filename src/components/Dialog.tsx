@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "./Button";
+import { Select } from "./Select";
 
 export const Dialog: React.FC<{
   visible: boolean;
@@ -53,6 +54,41 @@ export const ConfirmDialog: React.FC<{
       {description}
       <div className="mt-8 flex text-left text-white justify-evenly">
         <Button type="primary" onClick={onConfirm}>
+          {confirmText}
+        </Button>
+        <Button type="secondary" onClick={onCancel}>
+          {cancelText}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export const SelectDialog: React.FC<{
+  title: string;
+  options: string[];
+  selected: string;
+  confirmText: string;
+  cancelText: string;
+  onSelect?: (option: string) => void;
+  onConfirm?: VoidFunction;
+  onCancel?: VoidFunction;
+}> = ({
+  title,
+  options,
+  selected,
+  confirmText,
+  cancelText,
+  onSelect = () => {},
+  onConfirm = () => {},
+  onCancel = () => {},
+}) => {
+  return (
+    <div className="w-64 bg-white rounded-lg p-4">
+      <h1 className="font-black mb-2 text-left">{title}</h1>
+      <Select options={options} selected={selected} onSelect={onSelect} />
+      <div className="mt-8 flex text-left text-white justify-evenly">
+        <Button type="secondary" onClick={onCancel}>
           {confirmText}
         </Button>
         <Button type="secondary" onClick={onCancel}>

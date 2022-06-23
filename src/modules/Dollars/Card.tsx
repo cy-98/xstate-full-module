@@ -1,5 +1,4 @@
-import { useActor, useSelector } from "@xstate/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "../../components/Button";
 import { CenterActor } from "../../container/machine";
 
@@ -16,6 +15,7 @@ export const Dollars: React.FC<{
       },
     });
   };
+
   return (
     <div className="p-4 text-white bg-rose-500 rounded-md flex justify-between items-center">
       <div>Dollars module</div>

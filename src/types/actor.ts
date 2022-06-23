@@ -1,12 +1,12 @@
-import { ActorRef, State } from "xstate";
+import { ActorRef, EventType, State } from "xstate";
 
 export type ActionActor = ActorRef<
-  { type: "PLAY" },
+  { type: "TOGGLE" },
   | "start"
   | "done"
   | State<
       unknown,
-      { type: "PLAY" },
+      { type: "TOGGLE" },
       {
         states: {
           start: {};

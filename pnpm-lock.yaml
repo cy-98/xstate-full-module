@@ -4,6 +4,8 @@ specifiers:
   '@types/react': ^17.0.47
   '@types/react-dom': ^17.0.17
   '@types/react-slick': ^0.23.8
+  '@vime/core': ^5.3.1
+  '@vime/react': ^5.3.1
   '@xstate/inspect': ^0.7.0
   '@xstate/react': ^3.0.0
   autoprefixer: ^10.4.7
@@ -19,6 +21,8 @@ specifiers:
   xstate: ^4.32.1
 
 dependencies:
+  '@vime/core': 5.3.1
+  '@vime/react': 5.3.1_91c108fcafc7b4ddf20ad3207d2da384
   '@xstate/inspect': 0.7.0_xstate@4.32.1
   '@xstate/react': 3.0.0_83b3e746b3d7a44f199627017eaaa2a3
   react: 17.0.2
@@ -61,6 +65,20 @@ packages:
       fastq: 1.13.0
     dev: true
 
+  /@seznam/compose-react-refs/1.0.6:
+    resolution: {integrity: sha512-izzOXQfeQLonzrIQb8u6LQ8dk+ymz3WXTIXjvOlTXHq6sbzROg3NWU+9TTAOpEoK9Bth24/6F/XrfHJ5yR5n6Q==}
+    dev: false
+
+  /@stencil/core/2.5.2:
+    resolution: {integrity: sha512-bgjPXkSzzg1WnTgVUm6m5ZzpKt602WmA/QljODAW1xVN40OHJdbGblzF/F6MFzqv2c5Cy30CB41arc8qADIdcQ==}
+    engines: {node: '>=12.10.0', npm: '>=6.0.0'}
+    hasBin: true
+    dev: false
+
+  /@types/fscreen/1.0.1:
+    resolution: {integrity: sha512-hV2d0BreihMGtrg+EdAFOIl/O2EL5vhAheHJUztGE/lPFZIN8ZCpGFL8hCbtyi1CfhKjDRCf47sHjP+FwJ4q0Q==}
+    dev: false
+
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
     dev: true
@@ -88,6 +106,30 @@ packages:
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
     dev: true
+
+  /@vime/core/5.3.1:
+    resolution: {integrity: sha512-FbBla3WhQ72rWZUBR93XVpNAJwOMdQeWx8ZbRffYL5PXq0PzqSnjrYcE1KIsnmDt6v2jsOxh4hT264Rts5jBKQ==}
+    dependencies:
+      '@stencil/core': 2.5.2
+      '@types/fscreen': 1.0.1
+      fscreen: 1.2.0
+      mitt: 3.0.0
+      stencil-wormhole: 3.4.1
+    dev: false
+
+  /@vime/react/5.3.1_91c108fcafc7b4ddf20ad3207d2da384:
+    resolution: {integrity: sha512-MnWua6FCQ84af1k4jan1aaLmL57UF2WKwqhw8fw9PQ3Rz7W+vdPEb9VmNnyNZ3PessQRg5O7R94QRvUNKqkGog==}
+    requiresBuild: true
+    peerDependencies:
+      '@vime/core': 5.3.1
+      react: ^17.0.0
+      react-dom: ^17.0.0
+    dependencies:
+      '@seznam/compose-react-refs': 1.0.6
+      '@vime/core': 5.3.1
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    dev: false
 
   /@xstate/inspect/0.7.0_xstate@4.32.1:
     resolution: {integrity: sha512-3wrTf8TfBYprH1gBFdxmOQUBDpBazlICWvGdFzr8IHFL4MbiexEZdAsL2QC/WAmW9BqNYTWTwgfbvKHKg+FrlA==}
@@ -511,6 +553,10 @@ packages:
     resolution: {integrity: sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==}
     dev: true
 
+  /fscreen/1.2.0:
+    resolution: {integrity: sha512-hlq4+BU0hlPmwsFjwGGzZ+OZ9N/wq9Ljg/sq3pX+2CD7hrJsX9tJgWWK/wiNTFM212CLHWhicOoqwXyZGGetJg==}
+    dev: false
+
   /fsevents/2.3.2:
     resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -616,6 +662,10 @@ packages:
   /minimist/1.2.6:
     resolution: {integrity: sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==}
     dev: true
+
+  /mitt/3.0.0:
+    resolution: {integrity: sha512-7dX2/10ITVyqh4aOSVI9gdape+t9l2/8QxHrFmUXu4EEUpdlxl6RudZUPZoc+zuY2hk1j7XxVroIVIan/pD/SQ==}
+    dev: false
 
   /nanoid/3.3.4:
     resolution: {integrity: sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==}
@@ -840,6 +890,10 @@ packages:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /stencil-wormhole/3.4.1:
+    resolution: {integrity: sha512-ppYTcWTJnIl4ZAKwF39LTA9f/ypHfbVefsHdN2hpMQGrR57wt1TieZo9tlCM/r1Y4SFiZ5yz/cjho564C921Xw==}
+    dev: false
 
   /string-convert/0.2.1:
     resolution: {integrity: sha512-u/1tdPl4yQnPBjnVrmdLo9gtuLvELKsAoRapekWggdiQNvvvum+jYF329d84NAa660KQw7pB2n36KrIKVoXa3A==}
